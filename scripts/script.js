@@ -26,22 +26,12 @@ $(document).ready(function () {
 		});
 	});
 
-		// $.ajax({
-	// 	type: 'GET',
-	// 	url: 'https://api.spotify.com/v1/search?q=tania%20bowra&type=artist',
-	// 	contentType: "application/json",
-	// 	headers: {
-	// 		"Accept": "application/json",
-	// 		"content-type": "application/json",
-	// 		"Authorization": "Bearer    BQCWRewmJQJFNJohKwd-X46pldWI551uTdD3C9RKnp3iRsuzNVnYBZJGTTvSwUuvHY6wwruLxp9hCziARaYT0WPoTvVH4xhiozALIl7JJUC_iK8CFo3HDnYHQAH vkWkY8O4rNT0ROYziB_gN0PM8O6cmcol2Lk"
-	// 	}
-	// })
 
-var clientID = "6642631f98474b689bf4baf30817a702"
-var clientSecret = "2ec5414d075b427eadeb0282b66e2c19"
-var accessToken = ""
+	var clientID = "6642631f98474b689bf4baf30817a702"
+	var clientSecret = "2ec5414d075b427eadeb0282b66e2c19"
+	var accessToken = ""
 
-	$.ajax({
+	let settings = {
 		method: 'POST',
 		url: "https://accounts.spotify.com/api/token",
 		timeout: 0,
@@ -53,9 +43,28 @@ var accessToken = ""
 			Authorization: "Basic " + btoa(clientID + ":" + clientSecret)
 		},
 		success: function(data) {
-			console.log(data);
-			accessToken = data.access_token;
-			console.log(accessToken)
+			console.log("Spotify Validation Successful");
 		}
-	});
+	}
+
+	$.ajax(settings).done(function (data){
+		console.log(data);
+		let accessToken = data.access_token;
+
+		getSongOrArtist(accessToken)
+	})
+
+	function getSongOrArtist(token) {
+		$.ajax({
+			method: 'GET',
+			url: "https://api.spotify.com/v1/search?q=ed&type=artist",
+			// timeout: 0,
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			}
+		}).done(function (data) {
+			console.log(data);
+		});
+	}
 });
