@@ -28,7 +28,7 @@ $(document).ready(function () {
 	});
 })
 
-// The bottom function obtains a Spotify access token to access its' database
+// The bottom function obtains a Spotify access token to access it's database
 function getSpotifyToken(settings, musicDetail) {
 	$.ajax(settings).done(function (data){
 		let accessToken = data.access_token;
@@ -37,7 +37,7 @@ function getSpotifyToken(settings, musicDetail) {
 	})
 };
 
-// The bottom function allows people to search a song
+// The bottom function allows people to search for an artist
 function getSongOrArtist(token, musicDetail) {
 	$.ajax({
 		method: 'GET',
@@ -52,6 +52,7 @@ function getSongOrArtist(token, musicDetail) {
 	});
 }
 
+// The bottom function allows people to find similar artists
 function findSimilarArtist(data, token) {
 	let artistID = data.artists.items[0].id
 
@@ -94,6 +95,7 @@ function findDetails(artistTag, artistSpotify, id) {
 	});
 }
 
+// The bottom function displays the similar artists found by findSimilarArtist() to the screen
 function similarArtistToScreen(data) {
 	var allArtists = []
 	let artistVals = []
@@ -102,6 +104,7 @@ function similarArtistToScreen(data) {
 	$('#info').append("<h1 class='text-center display-6 text-muted fw-lighter colors-1' id='arrow'>V Scroll Down V</h1><h2 class='text-center display-4 colors-1' id='recommended-artists'>Recommended Artists</h2><br>");
 
 	x = 1
+	// This loop appends all similar artists found by Spotify to an array without repeat of artists
 	for (i = 0; i < data.tracks.length; i++) {
 
 		if (allArtists.includes(data.tracks[i].artists[0].name) == false) {
@@ -113,19 +116,24 @@ function similarArtistToScreen(data) {
 		}
 	}
 
+	// The bottom function checks for a click in the div containing the "#info" tag
+	// It then detects which artist is clicked and proceeds to find details about that artist using TheAudioDB API
+	// Two variables needed for target ID. 
+	// "id" is the variable sent to "artistDetailsToScreen()" function to let the function know where to place the info found from TheAudioDB API
+	// "order" is the variable used by "findDetails" to check the name of the artist and find details about that artist
 	$("#info").click(function(e) {
 		let targetID = e.target.id
 		let id = `#id-${targetID}`
 		let order = `#${targetID}`
-		console.log(id);
 		let artistSpotify = data.tracks[0].artists[0].external_urls.spotify
 		
 		findDetails(order, artistSpotify, id);
 	});
 }
 
+// Displays artist details found from TheAudioDB API to screen
 function artistDetailsToScreen(data, artistTag, artistSpotify) {
-	$('.description').empty();
+	$('.description').replaceWith("");
 
 	allArtistFacts = data.artists[0]
 	artistFacts = [
@@ -141,15 +149,12 @@ function artistDetailsToScreen(data, artistTag, artistSpotify) {
 		allArtistFacts.strBiographyEN
 	]
 
+	// The Below for loop prevents empty strings from being displayed
 	for (i = 0; i < artistFacts.length; i++) {
 		if (artistFacts[i] == "") {
 			artistFacts[i] = "null"
 		}
 	}
-
-	console.log("artist-tag " + artistTag)
-	console.log($('#artist-0'))
-	console.log("all artist facts " + artistFacts[9])
 
 	$(artistTag).append(
 		`
@@ -168,13 +173,9 @@ function artistDetailsToScreen(data, artistTag, artistSpotify) {
 		<button type="submit" class="btn btn-outline-secondary" id="artist-spotify">Artist's Spotify Profile</button>
 		`
 	);
-
-	// $("#details").click(function() {
-	// 	$('.description').empty();
-	// });
-
+	
+	// This event listener will empty the tag with the id of "artistTag"
 	$(artistTag).click(function() {
-		$('.description').empty();
-		unclick = false
+		$('.description').replaceWith("");
 	});
 }
