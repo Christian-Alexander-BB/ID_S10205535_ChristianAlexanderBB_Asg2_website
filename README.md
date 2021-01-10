@@ -83,3 +83,6 @@ Null
 ### Acknowledgements
 
 - I received inspiration for this project from a website called Spotalike, which helps you search for a similar song. I used it to search for songs similar to those I liked. However, I could not find a website that searched for a similar artist with artist details, so I decided to make Spotalike, but for artists instead of songs.
+
+## Website
+https://christian-alexander-bb.github.io/ID_S10205535_ChristianAlexanderBB_Asg2_website/
