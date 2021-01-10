@@ -1,0 +1,54 @@
+input[placeholder] {
+    text-align: center;
+}
+
+#secondary {
+    font-weight: 200;
+}
+
+#artist-spotify {
+    background-color:#59eb8c;
+    border-width: 2px;
+}
+
+#arrow {
+    padding-top: 7.5%;
+}
+
+#recommended-artists {
+    padding-top: 5%;
+}
+
+#details {
+    padding-top: 2%;
+}
+
+.colors-1 {
+    color: #3bb164;
+}
+
+.colors-2 {
+    color: #399158;
+}
+
+.button-no-borders{
+    border: none;
+    background: #2e2e2e;
+}
+
+body {
+    background-color: #2e2e2e;
+}
+
+header {
+    padding-top: 10%;
+    margin: auto;
+}
+
+h1 {
+    padding-bottom: 1%;
+}
+
+h2 {
+    padding-bottom: 3%;
+}
