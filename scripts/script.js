@@ -162,16 +162,16 @@ function artistDetailsToScreen(data, artistTag, artistSpotify) {
 
 	$(artistTag).append(
 		`
-		<p class="description">Alternate Name: ${artistFacts[0]}</p>
-		<p class="description">Genre: ${artistFacts[1]}</p>
-		<p class="description">Style: ${artistFacts[2]}</p>
-		<p class="description">Mood: ${artistFacts[3]}</p>
-		<p class="description">When They Formed: ${artistFacts[4]}</p>
-		<p class="description">When They Disbanded: ${artistFacts[5]}</p>
-		<p class="description">No. of Members: ${artistFacts[6]}</p>
-		<p class="description">Country of Origin: ${artistFacts[7]}</p>
-		<p class="description">Gender: ${artistFacts[8]}</p>
-		<p class="description">Biography: ${artistFacts[9]}</p>
+		<p class="description describe">Alternate Name: ${artistFacts[0]}</p>
+		<p class="description describe">Genre: ${artistFacts[1]}</p>
+		<p class="description describe">Style: ${artistFacts[2]}</p>
+		<p class="description describe">Mood: ${artistFacts[3]}</p>
+		<p class="description describe">When They Formed: ${artistFacts[4]}</p>
+		<p class="description describe">When They Disbanded: ${artistFacts[5]}</p>
+		<p class="description describe">No. of Members: ${artistFacts[6]}</p>
+		<p class="description describe">Country of Origin: ${artistFacts[7]}</p>
+		<p class="description describe">Gender: ${artistFacts[8]}</p>
+		<p class="description describe">Biography: ${artistFacts[9]}</p>
 
 		<form action='${artistSpotify}' method="get" class="d-grid gap-2 col-3 mx-auto description" target="_blank">
 		<button type="submit" class="btn btn-outline-secondary" id="artist-spotify">Artist's Spotify Profile</button>
@@ -179,7 +179,7 @@ function artistDetailsToScreen(data, artistTag, artistSpotify) {
 	);
 	
 	// This event listener will empty the tag with the id of "artistTag"
-	$(artistTag).click(function() {
+	$(".describe").click(function() {
 		$('.description').replaceWith("");
 	});
 }
