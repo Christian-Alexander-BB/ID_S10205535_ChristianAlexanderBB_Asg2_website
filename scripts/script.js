@@ -1,5 +1,7 @@
 $(document).ready(function () {
 	$("#send-song-artist-name").click(function () {
+		$("#test").empty();
+
 		let musicDetail = $("#song-artist-name").val();
 		let category = "artist"
 
@@ -45,13 +47,7 @@ function getSongOrArtist(token, musicDetail) {
 			Authorization: `Bearer ${token}`,
 		},
 		success: function(data) {
-			console.log("artist info");
-			console.log(data);
-
 			findSimilarArtist(data, token);
-			artist = data.artists.items[0].name
-			category = "artist"
-			findDetails(artist, category);
 		}
 	});
 }
@@ -61,15 +57,13 @@ function findSimilarArtist(data, token) {
 
 	$.ajax({
 		method: 'GET',
-		url: `https://api.spotify.com/v1/recommendations?seed_artists=${artistID}`,
+		url: `https://api.spotify.com/v1/recommendations?limit=90&seed_artists=${artistID}`,
 		headers: {
 			"Content-Type": "application/json",
 			Authorization: `Bearer ${token}`
 		},
 		success: function(artistData) {
-			console.log("similar artists");
 			console.log(artistData);
-			
 			similarArtistToScreen(artistData);
 		}
 	})
@@ -77,38 +71,101 @@ function findSimilarArtist(data, token) {
 
 // The bottom function obtains details about the song, artist, album, or any other music detail based on returned spotify 
 // search results
-function findDetails(musicDetail, category) {
-	if (category == "artist") {
-		$.ajax({
-			type: 'GET',
-			url: `https://www.theaudiodb.com/api/v1/json/1/search.php?s=${musicDetail.toLowerCase()}`,
-			success: function(data) {
-				if (data.artists === null) {
-					console.log('artist not found in database');
-					console.log(musicDetail);
-				}
+function findDetails(artistTag) {
+	let artist = $(artistTag).text();
 
-				else {
-					console.log("artist found in database");
-					console.log(data);
-				}
-			},
-			error: function() {
-				alert('error accessing database');
+	$.ajax({
+		type: 'GET',
+		url: `https://www.theaudiodb.com/api/v1/json/1/search.php?s=${artist.toLowerCase()}`,
+		success: function(data) {
+			if (data.artists === null) {
+				console.log(`Artist ${$(artistTag).text()} not found in database.`);
 			}
-		});
-	}
+
+			else {
+				console.log(`Artist ${$(artistTag).text()} found in database.`);
+				artistDetailsToScreen(data, artistTag);
+			}
+		},
+		error: function() {
+			alert('Error accessing database.');
+			console.log("Error accessing database");
+		}
+	});
 }
 
 function similarArtistToScreen(data) {
-	var artists = []
+	var allArtists = []
+	let artistVals = []
+	var artistOrder = []
+
 	$('#test').append("<b>Recommended Artists<b><br>");
 
-	for (i = 1; i < data.tracks.length; i++) {
+	x = 1
+	for (i = 0; i < data.tracks.length; i++) {
 
-		if (artists.includes(data.tracks[i].artists[0].name) == false) {
-			$('#test').append(data.tracks[i].artists[0].name + "<br>");
-			artists.push(data.tracks[i].artists[0].name);
+		if (allArtists.includes(data.tracks[i].artists[0].name) == false) {
+			$('#test').append(`<p id=artist-${i}>${data.tracks[i].artists[0].name}</p><br>`);
+			artistVals.push(`#artist-${x}`);
+			artistOrder.push(i);
+			allArtists.push(data.tracks[i].artists[0].name);
+			x++;
 		}
 	}
+
+	console.log(allArtists);
+
+	$("#test").click(function(e) {
+		console.log("hello " + allArtists[0])
+		let targetID = e.target.id
+		let id = `#${targetID}`
+		// let artistSpotify = data.tracks[artistOrder[id.indexOf()]].artists[0].external-urls.spotify
+		let artistSpotify = data.tracks[0].artists[0].external_urls.spotify
+		console.log(artistSpotify)
+		
+		findDetails(id);
+	})
+}
+
+function artistDetailsToScreen(data, artistTag) {
+	$('.description').empty()
+	allArtistFacts = data.artists[0]
+	artistFacts = [
+		allArtistFacts.strArtistAlternate,
+		allArtistFacts.strGenre,
+		allArtistFacts.strStyle,
+		allArtistFacts.strMood,
+		allArtistFacts.intFormedYear,
+		allArtistFacts.intDiedYear,
+		allArtistFacts.intMembers,
+		allArtistFacts.strCountry,
+		allArtistFacts.strGender,
+		allArtistFacts.strBiographyEN
+	]
+
+	for (i = 0; i < artistFacts.length; i++) {
+		if (artistFacts[i] == null) {
+			artistFacts[i] = "Null"
+		}
+	}
+
+	$(artistTag).append(
+		`
+		<p class="description">Alternate Name: ${artistFacts[0]}</p>
+		<p class="description">Genre: ${artistFacts[1]}</p>
+		<p class="description">Style: ${artistFacts[2]}</p>
+		<p class="description">Mood: ${artistFacts[3]}</p>
+		<p class="description">When They Formed: ${artistFacts[4]}</p>
+		<p class="description">When They Disbanded: ${artistFacts[5]}</p>
+		<p class="description">No. of Members: ${artistFacts[6]}</p>
+		<p class="description">Country of Origin: ${artistFacts[7]}</p>
+		<p class="description">Gender: ${artistFacts[8]}</p>
+		<p class="description">Biography: ${artistFacts[9]}</p>
+		<button class="description" id="link-to-spotify">Artist's Spotify Profile</button>
+		`
+	)
+}
+
+function getArtistSpotify(data) {
+	spotifyLink = data.artists.items[0].id
 }
