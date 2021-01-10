@@ -1,6 +1,6 @@
 $(document).ready(function () {
 	$("#send-song-artist-name").click(function () {
-		$("#test").empty();
+		$("#info").empty();
 
 		let musicDetail = $("#song-artist-name").val();
 		let category = "artist"
@@ -71,7 +71,7 @@ function findSimilarArtist(data, token) {
 
 // The bottom function obtains details about the song, artist, album, or any other music detail based on returned spotify 
 // search results
-function findDetails(artistTag, artistSpotify) {
+function findDetails(artistTag, artistSpotify, id) {
 	let artist = $(artistTag).text();
 
 	$.ajax({
@@ -79,12 +79,12 @@ function findDetails(artistTag, artistSpotify) {
 		url: `https://www.theaudiodb.com/api/v1/json/1/search.php?s=${artist.toLowerCase()}`,
 		success: function(data) {
 			if (data.artists === null) {
-				console.log(`Artist ${$(artistTag).text()} not found in database.`);
+				console.log(`Artist ${$(id).text()} not found in database.`);
 			}
 
 			else {
-				console.log(`Artist ${$(artistTag).text()} found in database.`);
-				artistDetailsToScreen(data, artistTag, artistSpotify);
+				console.log(`Artist ${$(id).text()} found in database.`);
+				artistDetailsToScreen(data, id, artistSpotify);
 			}
 		},
 		error: function() {
@@ -99,13 +99,13 @@ function similarArtistToScreen(data) {
 	let artistVals = []
 	var artistOrder = []
 
-	$('#test').append("<h1 class='text-center display-6 text-muted fw-lighter colors-1' id='arrow'>V Scroll Down V</h1><h2 class='text-center display-4 colors-1' id='recommended-artists'>Recommended Artists</h2><br>");
+	$('#info').append("<h1 class='text-center display-6 text-muted fw-lighter colors-1' id='arrow'>V Scroll Down V</h1><h2 class='text-center display-4 colors-1' id='recommended-artists'>Recommended Artists</h2><br>");
 
 	x = 1
 	for (i = 0; i < data.tracks.length; i++) {
 
 		if (allArtists.includes(data.tracks[i].artists[0].name) == false) {
-			$('#test').append(`<div class="text-center" id="artist-${i}"><button class="colors-2 button-no-borders fw-light fs-5">${data.tracks[i].artists[0].name}</button><br><br></div>`);
+			$('#info').append(`<div class="text-center"><button class="colors-1 button-no-borders fw-light fs-5" id="artist-${i}">${data.tracks[i].artists[0].name}</button><br><div id="id-artist-${i}" class="fw-light fs-6 d-grid gap-2 col-8 mx-auto details colors-2"></div><br><br></div>`);
 			artistVals.push(`#artist-${x}`);
 			artistOrder.push(i);
 			allArtists.push(data.tracks[i].artists[0].name);
@@ -113,22 +113,20 @@ function similarArtistToScreen(data) {
 		}
 	}
 
-	console.log(allArtists);
-
-	$("#test").click(function(e) {
-		console.log("hello " + allArtists[0])
+	$("#info").click(function(e) {
 		let targetID = e.target.id
-		let id = `#${targetID}`
+		let id = `#id-${targetID}`
+		let order = `#${targetID}`
+		console.log(id);
 		let artistSpotify = data.tracks[0].artists[0].external_urls.spotify
-		console.log(artistSpotify)
 		
-		findDetails(id, artistSpotify);
-	})
+		findDetails(order, artistSpotify, id);
+	});
 }
 
 function artistDetailsToScreen(data, artistTag, artistSpotify) {
-	$('.description').empty()
-	console.log("artist spotify: " + artistSpotify);
+	$('.description').empty();
+
 	allArtistFacts = data.artists[0]
 	artistFacts = [
 		allArtistFacts.strArtistAlternate,
@@ -149,9 +147,12 @@ function artistDetailsToScreen(data, artistTag, artistSpotify) {
 		}
 	}
 
+	console.log("artist-tag " + artistTag)
+	console.log($('#artist-0'))
+	console.log("all artist facts " + artistFacts[9])
+
 	$(artistTag).append(
 		`
-		<div class="fw-light fs-6 d-grid gap-2 col-8 mx-auto" id="details">
 		<p class="description">Alternate Name: ${artistFacts[0]}</p>
 		<p class="description">Genre: ${artistFacts[1]}</p>
 		<p class="description">Style: ${artistFacts[2]}</p>
@@ -162,13 +163,18 @@ function artistDetailsToScreen(data, artistTag, artistSpotify) {
 		<p class="description">Country of Origin: ${artistFacts[7]}</p>
 		<p class="description">Gender: ${artistFacts[8]}</p>
 		<p class="description">Biography: ${artistFacts[9]}</p>
-		<form action='${artistSpotify}' method="get" class="d-grid gap-2 col-2 mx-auto" target="_blank">
-		<button type="submit" class="btn btn-outline-secondary" id="artist-spotify">Artist's Spotify Profile</button>
-		</div>
-		`
-	)
-}
 
-function getArtistSpotify(data) {
-	spotifyLink = data.artists.items[0].id
+		<form action='${artistSpotify}' method="get" class="d-grid gap-2 col-3 mx-auto description" target="_blank">
+		<button type="submit" class="btn btn-outline-secondary" id="artist-spotify">Artist's Spotify Profile</button>
+		`
+	);
+
+	// $("#details").click(function() {
+	// 	$('.description').empty();
+	// });
+
+	$(artistTag).click(function() {
+		$('.description').empty();
+		unclick = false
+	});
 }
