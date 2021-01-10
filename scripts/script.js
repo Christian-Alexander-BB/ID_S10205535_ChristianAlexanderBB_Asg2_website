@@ -103,6 +103,10 @@ function similarArtistToScreen(data) {
 
 	$('#info').append("<h1 class='text-center display-6 text-muted fw-lighter colors-1' id='arrow'>V Scroll Down V</h1><h2 class='text-center display-4 colors-1' id='recommended-artists'>Recommended Artists</h2><br>");
 
+	if (data.tracks.length === 0) {
+		$('#info').append("<h3 class='text-center display-6 colors-1'>No Similar Artists Found. Try Using A Different Artist.</h3>");
+	}
+
 	x = 1
 	// This loop appends all similar artists found by Spotify to an array without repeat of artists
 	for (i = 0; i < data.tracks.length; i++) {
