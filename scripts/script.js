@@ -74,6 +74,7 @@ function findSimilarArtist(data, token) {
 // search results
 function findDetails(artistTag, artistSpotify, id) {
 	let artist = $(artistTag).text();
+	console.log("artist chosen: " + artist);
 
 	$.ajax({
 		type: 'GET',
@@ -112,7 +113,7 @@ function similarArtistToScreen(data) {
 	for (i = 0; i < data.tracks.length; i++) {
 
 		if (allArtists.includes(data.tracks[i].artists[0].name) == false) {
-			$('#info').append(`<div class="text-center"><button class="colors-1 button-no-borders fw-light fs-5" id="artist-${i}">${data.tracks[i].artists[0].name}</button><br><div id="id-artist-${i}" class="fw-light fs-6 d-grid gap-2 col-8 mx-auto details colors-2"></div><br><br></div>`);
+			$('#info').append(`<div class="text-center"><button class="colors-1 button-no-borders fw-light fs-5" id="artist-${x}">${data.tracks[i].artists[0].name}</button><br><div id="id-artist-${x}" class="fw-light fs-6 d-grid gap-2 col-8 mx-auto details colors-2"></div><br><br></div>`);
 			artistVals.push(`#artist-${x}`);
 			artistOrder.push(i);
 			allArtists.push(data.tracks[i].artists[0].name);
@@ -129,7 +130,18 @@ function similarArtistToScreen(data) {
 		let targetID = e.target.id
 		let id = `#id-${targetID}`
 		let order = `#${targetID}`
-		let artistSpotify = data.tracks[0].artists[0].external_urls.spotify
+		console.log("artist clicked: " + $(order).text())
+		console.log("allArtists: " + allArtists);
+		console.log("artistOrder: " + artistOrder);
+		console.log("artistVals: " + artistVals);
+		console.log("Order: " + order);
+		console.log("allArtists Index: " + artistVals.indexOf(order));
+		console.log("Location: " + artistOrder[artistVals.indexOf(order)]);
+		let artistSpotify = data.tracks[artistOrder[artistVals.indexOf(order)]].artists[0].external_urls.spotify
+
+		for (i = 0; i < allArtists.length; i++) {
+			console.log(`artist${i + 1}: ${allArtists[i]}, order: ${artistVals[i]}`);
+		}
 		
 		findDetails(order, artistSpotify, id);
 	});
@@ -137,6 +149,7 @@ function similarArtistToScreen(data) {
 
 // Displays artist details found from TheAudioDB API to screen
 function artistDetailsToScreen(data, artistTag, artistSpotify) {
+	console.log(artistTag);
 	$('.description').replaceWith("");
 
 	allArtistFacts = data.artists[0]
