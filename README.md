@@ -1,6 +1,6 @@
 # ID_S10205535_ChristianAlexanderBB_Asg2_website
 
-# Your Project's Name
+# Similar Artist Finder
 
 This project aims to create a website where users can search for similar song artists to what was inputted in the search bar. For example, they can search for artists who create music similar to their favorite artists.
 
